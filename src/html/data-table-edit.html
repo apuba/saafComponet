@@ -1,0 +1,78 @@
+<table  class="table table-bordered table-hover table-condensed">
+    <thead class="bg-gray-white">
+        <tr class="text-center">
+            <th>序号</th>
+            <th ng-repeat="item in legend" class="{{item.className}}"><span class="red" ng-if="item.required">*</span>{{item.name}}</th>
+            <th  >操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr class="text-center" ng-repeat="row in model track by $index" ng-init="parentIndex = $index"
+            >
+            <td>{{$index+1}}</td>
+            <td ng-repeat="item in legend track by $index" ng-init="childIndex = $index" class="{{item.rowClassName}}">
+                <!--lov modle-->
+                <div class="input-group input-group-xs" ng-if="item.type==='lov' ">
+                    <input type="text" class="form-control radius3"
+                           ng-model="row[item.value]" ng-disabled="item.disabled" ng-required="item.required"  id="{{ name +'_'+ item.value }}"
+                           name="{{ name +'_'+ item.value }}">
+                    <span class="input-group-btn"  data-toggle="modal" data-target="{{ item.target }}" ng-click="callback(item.callback,childIndex)">
+                       <a class="btn btn-default"><i class="fa fa-search"></i></a>
+                    </span>
+                </div>
+                <!--文字-->
+                <input class="form-control radius3 input-xs"
+                       ng-if="item.type == 'text'|| !item.type"
+                       type="text"
+                       ng-required="item.required"
+                       ng-disabled="item.disabled"
+                       ng-model="row[item.value]"
+                       ng-readonly="item.readonly"
+                       data-required-msg="{{ item.requiredMsg }}"
+                       data-error-msg="{{ item.errorMsg }}"
+                       id="{{ name +'_'+ item.value }}"
+                       name="{{ name +'_'+ item.value }}"
+                >
+                <div class="input-group input-group-xs" ng-if=" item.type == 'lookCode'||item.type == 'lookUpCode'||item.type == 'lookupCode'" >
+                    <div lookup-code="{{ item.lookCode||item.lookUpCode||item.lookupCode }}" ng-model="row[item.value]"
+                         ng-required="item.required"  data-required-msg="{{ item.requiredMsg }}"  data-error-msg="{{ item.errorMsg }}"
+                         id="{{ name +'_'+ item.value }}"
+                         data-callback="{{item.callback?item.callback:''}}"
+                         name="{{ name +'_'+ item.value }}" ng-disabled="item.disabled" ng-readonly="item.readonly"></div>
+                </div>
+
+                <!--时间-->
+                <input type="text" class="form-control radius3 input-xs"
+                       ng-required="item.required"
+                       ng-disabled="item.disabled"
+                       ng-readonly="item.readonly"
+                       data-required-msg="{{ item.requiredMsg }}"
+                       data-error-msg="{{ item.errorMsg }}"
+                       id="{{ name +'_'+ item.value }}"
+                       name="{{ name +'_'+ item.value }}"
+                       ng-if="item.type == 'time'"
+                       data-stratdate="{{ ngModel[item.startDate]}}"
+                       data-enddate="{{ ngModel[item.endDate]}}"
+                       date-time-picker
+                       data-is-today="{{ item.isToday}}"
+                       data-show-meridian="{{item.showMeridian}}"
+                       data-minute-step="{{item.minuteStep}}"
+                       data-start-view="{{ startView(item.date)}}"
+                       data-date-format="{{ item.date || 'yyyy-mm-dd' }}"
+                       data-min-view="{{ minView(item.date)}}"
+                       ng-model="row[item.value]">
+            </td>
+            <td >
+                <a type="button" ng-if="formType === 'readonly' || action === 'detail'  || parentIndex != 0"
+                   ng-click="relief(childIndex)" style="cursor: pointer;white-space: nowrap;">
+                    <i class="fa fa-trash-o fa-lg"></i>删除
+                </a>
+                <a ng-repeat="icon in funcColumn" type="button"
+                   ng-if="funcColumn.length >0"
+                   ng-click="funcCallback(icon.callback,item,childIndex)" style="cursor: pointer;white-space: nowrap;">
+                    <i ng-class="icon.icon" class="fa "></i>{{icon.text || icon.value}}
+                </a>
+            </td>
+        </tr>
+    </tbody>
+</table>
